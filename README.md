@@ -19,7 +19,7 @@ Integration instructions
     * Copy `CardIOPGPlugin.js` to your project's `www` folder. (If you don't have a `www` folder yet, run in the Simulator and follow the instructions in the build warnings.)
     * Add e.g. `<script type="text/javascript" src="CardIOPGPlugin.js"></script>` to your html.
     * See `CardIOPGPlugin.js` for detailed usage information.
-    * Add the following to ``config.xml, under the plugins tag: `<plugin name="CardIOPGPlugin" value="CardIOPGPlugin" />`
+    * Add the following to `config.xml`, under the `<plugins>` tag: `<plugin name="CardIOPGPlugin" value="CardIOPGPlugin" />`
     * Sample `canScan` usage:
 
     ```javascript
