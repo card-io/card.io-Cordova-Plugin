@@ -19,22 +19,35 @@ Integration instructions
     * Copy `CardIOPGPlugin.js` to your project's `www` folder. (If you don't have a `www` folder yet, run in the Simulator and follow the instructions in the build warnings.)
     * Add e.g. `<script type="text/javascript" src="CardIOPGPlugin.js"></script>` to your html.
     * See `CardIOPGPlugin.js` for detailed usage information.
-    * Add the following to `config.xml`, under the `<plugins>` tag: `<plugin name="CardIOPGPlugin" value="CardIOPGPlugin" />`
+    * Add the following to `config.xml`, for PhoneGap version 3.0+:
+
+         ```xml
+        <feature name="CardIOPGPlugin">
+          <param name="ios-package" value="CardIOPGPlugin" />
+        </feature>
+       ```
+    
+      for older versions under the `plugins` tag:
+       
+       ```xml
+       <plugin name="CardIOPGPlugin" value="CardIOPGPlugin" />
+       ``` 
+
     * Sample `canScan` usage:
 
-    ```javascript
-    window.plugins.card_io.canScan(function(canScan) {console.log("card.io can scan: " + canScan);});
-    ```
+      ```javascript
+      window.plugins.card_io.canScan(function(canScan) {console.log("card.io can scan: " + canScan);});
+      ```
 
-    * Sample `scan` usage:  
+    * Sample `scan` usage:
 
-    ```javascript
-    window.plugins.card_io.scan("YOUR_APP_TOKEN", {}, function(response) {
-      console.log("card number: " + response["card_number"]);
-      }, function() {
-        console.log("card scan cancelled");
-    });
-    ```
+      ```javascript
+      window.plugins.card_io.scan("YOUR_APP_TOKEN", {}, function(response) {
+        console.log("card number: " + response["card_number"]);
+        }, function() {
+          console.log("card scan cancelled");
+      });
+      ```
 
 ### Sample HTML + JS
 
