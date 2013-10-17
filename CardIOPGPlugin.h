@@ -11,8 +11,8 @@
 
 @interface CardIOPGPlugin : CDVPlugin<CardIOPaymentViewControllerDelegate>
 
-- (void)scan:(NSMutableArray *)args withDict:(NSMutableDictionary *)options;
-- (void)canScan:(NSMutableArray *)args withDict:(NSMutableDictionary *)options;
-- (void)version:(NSMutableArray *)args withDict:(NSMutableDictionary *)options;
+- (void)scan:(CDVInvokedUrlCommand *)command;
+- (void)canScan:(CDVInvokedUrlCommand *)command;
+- (void)version:(CDVInvokedUrlCommand *)command;
 
 @end

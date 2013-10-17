@@ -24,9 +24,10 @@
 @implementation CardIOPGPlugin
 
 
-- (void)scan:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-  self.scanCallbackId = [args objectAtIndex:0];
-  NSString *appToken = [args objectAtIndex:1];
+- (void)scan:(CDVInvokedUrlCommand *)command {
+  self.scanCallbackId = command.callbackId;
+  NSString *appToken = [command.arguments objectAtIndex:0];
+  NSDictionary* options = [command.arguments objectAtIndex:1];
   
   self.paymentViewController = [[CardIOPaymentViewController alloc] initWithPaymentDelegate:self];
   self.paymentViewController.appToken = appToken;
@@ -38,7 +39,7 @@
 
   NSNumber *collectZip = [options objectForKey:@"collect_zip"];
   if(collectZip) {
-    self.paymentViewController.collectZip = [collectZip boolValue];
+    self.paymentViewController.collectPostalCode = [collectZip boolValue];
   }
 
   NSNumber *collectExpiry = [options objectForKey:@"collect_expiry"];
@@ -51,11 +52,6 @@
     self.paymentViewController.disableManualEntryButtons = [disableManualEntryButtons boolValue];
   }
 
-  NSNumber *showsFirstUseAlert = [options objectForKey:@"shows_first_use_alert"];
-  if(showsFirstUseAlert) {
-    self.paymentViewController.showsFirstUseAlert = [showsFirstUseAlert boolValue];
-  }
-  
   // if it is nil, its ok.
   NSString *languageOrLocale = [[[NSLocale alloc] initWithLocaleIdentifier:[options objectForKey:@"languageOrLocale"]] localeIdentifier];
   if (languageOrLocale) {
@@ -65,20 +61,18 @@
   [self.viewController presentModalViewController:self.paymentViewController animated:YES];
 }
 
-- (void)canScan:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-  NSString *callbackId = [args objectAtIndex:0];
+- (void)canScan:(CDVInvokedUrlCommand *)command {
   BOOL canScan = [CardIOPaymentViewController canReadCardWithCamera];
-  [self sendSuccessTo:callbackId withObject:[NSNumber numberWithBool:canScan]];
+  [self sendSuccessTo:command.callbackId withObject:[NSNumber numberWithBool:canScan]];
 }
 
-- (void)version:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-  NSString *callbackId = [args objectAtIndex:0];
+- (void)version:(CDVInvokedUrlCommand *)command {
   NSString *version = [CardIOPaymentViewController libraryVersion];
 
   if(version) {
-    [self sendSuccessTo:callbackId withObject:version];
+    [self sendSuccessTo:command.callbackId withObject:version];
   } else {
-    [self sendFailureTo:callbackId];
+    [self sendFailureTo:command.callbackId];
   }
 }
 
@@ -108,8 +102,8 @@
   if(info.cvv.length > 0) {
     [response setObject:info.cvv forKey:@"cvv"];
   }
-  if(info.zip.length > 0) {
-    [response setObject:info.zip forKey:@"zip"];
+  if(info.postalCode.length > 0) {
+    [response setObject:info.postalCode forKey:@"zip"];
   }
 
   [self sendSuccessTo:self.scanCallbackId withObject:response];

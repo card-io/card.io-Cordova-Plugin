@@ -20,7 +20,7 @@ function CardIO() {
  *
  * @parameter options: an object; may be {}. Sample options object:
  *  {"collect_expiry": true, "collect_cvv": false, "collect_zip": false,
- *   "shows_first_use_alert": true, "disable_manual_entry_buttons": false, "languageOrLocale": "en"}
+ *   "disable_manual_entry_buttons": false, "languageOrLocale": "en"}
  * Omit any key from options to get the default value. For more detail on
  * each of the options, look at CardIOPaymentViewController.h.
  *
@@ -46,8 +46,8 @@ CardIO.prototype.canScan = function(callback) {
     console.log("Could not detect whether card.io card scanning is available.");
   };
   var wrappedSuccess = function(response) {
-    callback(response != 0);
-  }
+    callback(response !== 0);
+  };
   cordova.exec(wrappedSuccess, failureCallback, "CardIOPGPlugin", "canScan", []);
 };
 
@@ -69,7 +69,7 @@ CardIO.prototype.version = function(callback) {
  * Plugin setup boilerplate.
  */
 cordova.addConstructor(function() {
-                       
+
   if(!window.plugins) {
     window.plugins = {};
   }
