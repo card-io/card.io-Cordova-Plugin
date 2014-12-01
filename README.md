@@ -3,115 +3,143 @@ card.io iOS plug-in for Phone Gap
 
 This plug-in exposes card.io credit card scanning.
 
-Note: If you would like to actually process a credit card charge, you might be interested in the [PayPal iOS SDK PhoneGap Plug-in](https://github.com/paypal/PayPal-iOS-SDK-PhoneGap).
-
+Note: If you would like to actually process a credit card charge, you might be interested in the [PayPal iOS SDK Cordova/PhoneGap Plug-in](https://github.com/paypal/PayPal-Cordova-Plugin).
 
 Integration instructions
 ------------------------
 
-* Add the card.io library:
-    * Sign up for an account at https://www.card.io/, create an app, and take note of your `app_token`.
-    * Download the [card.io iOS SDK](https://github.com/card-io/card.io-iOS-SDK).
-    * Follow the instructions there to add the requisite files, frameworks, and linker flags to your Xcode project.
+The PayPal SDK Cordova/Phonegap Plugin adds support for the CardIO iOS platform. It uses the native CardIO library. Cordova plugin management will set up all the required capabilities/frameworks for the project. The only bit left for you to do is to add necessary files, as described below.
 
-* Add this plug-in:
-    * Add `CardIOPGPlugin.[h|m]` to your project (Plugins group).
-    * Copy `CardIOPGPlugin.js` to your project's `www` folder. (If you don't have a `www` folder yet, run in the Simulator and follow the instructions in the build warnings.)
-    * Add e.g. `<script type="text/javascript" src="CardIOPGPlugin.js"></script>` to your html.
-    * See `CardIOPGPlugin.js` for detailed usage information.
-    * Add the following to `config.xml`, for PhoneGap version 3.0+:
+1.	Follow the official [Cordova](https://cordova.apache.org) documentation to install command line tools or [Phonegap](http://phonegap.com/install/).
+2.	Create project, add plugin and platforms:
 
-         ```xml
-        <feature name="CardIOPGPlugin">
-          <param name="ios-package" value="CardIOPGPlugin" />
-        </feature>
-       ```
-    
-      for older versions under the `plugins` tag:
-       
-       ```xml
-       <plugin name="CardIOPGPlugin" value="CardIOPGPlugin" />
-       ``` 
+```bash
 
-    * Sample `canScan` usage:
+   $ cordova create ScanCard com.mycompany.scancard "ScanCard"
+   $ cd ScanCard
+   $ cordova platform add ios
+   $ cordova plugin add https://github.com/card-io/card.io-iOS-SDK-PhoneGap
+```
 
-      ```javascript
-      window.plugins.card_io.canScan(function(canScan) {console.log("card.io can scan: " + canScan);});
-      ```
+1.	Follow Your app integration section below.
+2.	Run `cordova run ios` to build and the project.
 
-    * Sample `scan` usage:
+Sample HTML + JS
+----------------
 
-      ```javascript
-      window.plugins.card_io.scan("YOUR_APP_TOKEN", {}, function(response) {
-        console.log("card number: " + response["card_number"]);
-        }, function() {
-          console.log("card scan cancelled");
-      });
-      ```
+1.	In `ScanCard/www/index.html` add the following to lines after `<p class="event received">Device is Ready</p>`:
 
-### Sample HTML + JS
+```javascript
+      <button id="scanBtn"> Scan Now!</button>
+```
 
-```html
-<h1>Scan Example</h1>
-<p><button id='scanBtn'>Scan now</button></p>
-<script type="text/javascript">
+1.	Replace `ScanCard/www/js/index.js` with the following code:
 
-  function onDeviceReady() {
+```javascript
 
-    var cardIOResponseFields = [
-      "card_type",
-      "redacted_card_number",
-      "card_number",
-      "expiry_month",
-      "expiry_year",
-      "cvv",
-      "zip"
-    ];
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one
+     * or more contributor license agreements.  See the NOTICE file
+     * distributed with this work for additional information
+     * regarding copyright ownership.  The ASF licenses this file
+     * to you under the Apache License, Version 2.0 (the
+     * "License"); you may not use this file except in compliance
+     * with the License.  You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing,
+     * software distributed under the License is distributed on an
+     * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     * KIND, either express or implied.  See the License for the
+     * specific language governing permissions and limitations
+     * under the License.
+     */
+    var app = {
+        // Application Constructor
+        initialize: function() {
+            this.bindEvents();
+        },
+        // Bind Event Listeners
+        //
+        // Bind any events that are required on startup. Common events are:
+        // 'load', 'deviceready', 'offline', and 'online'.
+        bindEvents: function() {
+            document.addEventListener('deviceready', this.onDeviceReady, false);
+        },
+        // deviceready Event Handler
+        //
+        // The scope of 'this' is the event. In order to call the 'receivedEvent'
+        // function, we must explicitly call 'app.receivedEvent(...);'
+        onDeviceReady: function() {
+            app.receivedEvent('deviceready');
+        },
+        // Update DOM on a Received Event
+        receivedEvent: function(id) {
+            var parentElement = document.getElementById(id);
+            var listeningElement = parentElement.querySelector('.listening');
+            var receivedElement = parentElement.querySelector('.received');
 
-    var onCardIOComplete = function(response) {
-      console.log("card.io scan complete");
-      for (var i = 0, len = cardIOResponseFields.length; i < len; i++) {
-        var field = cardIOResponseFields[i];
-        console.log(field + ": " + response[field]);
-      }
+            listeningElement.setAttribute('style', 'display:none;');
+            receivedElement.setAttribute('style', 'display:block;');
+
+            console.log('Received Event: ' + id);
+
+            app.example();
+        },
+
+        example : function () {
+          var cardIOResponseFields = [
+            "card_type",
+            "redacted_card_number",
+            "card_number",
+            "expiry_month",
+            "expiry_year",
+            "cvv",
+            "zip"
+          ];
+
+          var onCardIOComplete = function(response) {
+            console.log("card.io scan complete");
+            for (var i = 0, len = cardIOResponseFields.length; i < len; i++) {
+              var field = cardIOResponseFields[i];
+              console.log(field + ": " + response[field]);
+            }
+          };
+
+          var onCardIOCancel = function() {
+            console.log("card.io scan cancelled");
+          };
+
+          var onCardIOCheck = function (canScan) {
+            console.log("card.io canScan? " + canScan);
+            var scanBtn = document.getElementById("scanBtn");
+            if (!canScan) {
+              scanBtn.innerHTML = "Manual entry";
+            }
+            scanBtn.onclick = function (e) {
+              CardIO.scan({
+                  "collect_expiry": true,
+                  "collect_cvv": false,
+                  "collect_zip": false,
+                  "shows_first_use_alert": true,
+                  "disable_manual_entry_buttons": false
+                },
+                onCardIOComplete,
+                onCardIOCancel
+              );
+            }
+          };
+
+          CardIO.canScan(onCardIOCheck);
+        }
     };
 
-    var onCardIOCancel = function() {
-      console.log("card.io scan cancelled");
-    };
+    app.initialize();
 
-    var onCardIOCheck = function (canScan) {
-      console.log("card.io canScan? " + canScan);
-      var scanBtn = document.getElementById("scanBtn");
-      if (!canScan) {
-        scanBtn.innerHTML = "Manual entry";
-      }
-      scanBtn.onclick = function (e) {
-        window.plugins.card_io.scan(
-          "YOUR_APP_TOKEN_HERE",
-          {
-            "collect_expiry": true,
-            "collect_cvv": false,
-            "collect_zip": false,
-            "shows_first_use_alert": true,
-            "disable_manual_entry_buttons": false
-          },
-          onCardIOComplete,
-          onCardIOCancel
-        );
-      }
-    };
-
-    window.plugins.card_io.canScan(onCardIOCheck);
-  }
-</script>
 ```
 
 License
 -------
-* This plugin is released under the MIT license: http://www.opensource.org/licenses/MIT
 
-Notes
------
-* card.io supports iOS 5.0+.
-* Having trouble getting started? Check out the [Phone Gap plugin getting started guide](http://docs.phonegap.com/en/2.7.0/guide_getting-started_ios_index.md.html#Getting%20Started%20with%20iOS).
+-	This plugin is released under the MIT license: http://www.opensource.org/licenses/MIT
