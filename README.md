@@ -5,6 +5,17 @@ This plug-in exposes card.io credit card scanning.
 
 Note: If you would like to actually process a credit card charge, you might be interested in the [PayPal iOS SDK Cordova/PhoneGap Plug-in](https://github.com/paypal/PayPal-Cordova-Plugin).
 
+Maintenance of this repository
+------------------------------
+
+Although the [card.io](https://www.card.io) team created this repo as a starting point for Cordova/PhoneGap developers, our team is expert in neither Cordova/PhoneGap nor JavaScript. Please consider this repo a starting point, rather than an ultimate solution.
+
+We invite the Cordova/PhoneGap community to take responsibllity for maintaining this repo.
+
+If you discover a problem here, please submit a Pull Request with the solution. (Unless, of course, the problem is actually in the underlying card.io SDK for either [iOS](https://github.com/card-io/card.io-iOS-SDK) or [Android](https://github.com/card-io/card.io-Android-SDK). We're always interested in discovering and fixing bugs in our SDKs!)
+
+**Update:** A very helpful developer from [Keepe Up, Inc](http://www.keepe.com) has added Android support to this plug-in, and has registered the result [here in the Corodova Plugin Registry](http://plugins.cordova.io/#/package/com.keepe.cardio).
+
 Integration instructions
 ------------------------
 
