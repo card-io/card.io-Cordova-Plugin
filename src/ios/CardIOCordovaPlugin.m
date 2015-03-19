@@ -136,7 +136,7 @@
 }
 
 - (void)sendFailureTo:(NSString *)callbackId {
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
