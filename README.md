@@ -1,27 +1,45 @@
-card.io iOS plug-in for Phone Gap
----------------------------------
+card.io plug-in for Cordova
+---------------------------
 
 This plug-in exposes card.io credit card scanning.
 
-Note: If you would like to actually process a credit card charge, you might be interested in the [PayPal iOS SDK Cordova/PhoneGap Plug-in](https://github.com/paypal/PayPal-Cordova-Plugin).
+Note: If you would like to actually process a credit card charge, you might be interested in the [PayPal Cordova Plug-in](https://github.com/paypal/PayPal-Cordova-Plugin).
 
 Maintenance of this repository
 ------------------------------
 
-Although the [card.io](https://www.card.io) team created this repo as a starting point for Cordova/PhoneGap developers, our team is expert in neither Cordova/PhoneGap nor JavaScript. Please consider this repo a starting point, rather than an ultimate solution.
+If you discover a problem here, please submit an Issue or Pull Request. (Unless, of course, the problem is actually in the underlying card.io SDK for either [iOS](https://github.com/card-io/card.io-iOS-SDK) or [Android](https://github.com/card-io/card.io-Android-SDK). We're always interested in discovering and fixing bugs in our SDKs!)
 
-We invite the Cordova/PhoneGap community to take responsibllity for maintaining this repo.
+Supported configurations
+------------------------
 
-If you discover a problem here, please submit a Pull Request with the solution. (Unless, of course, the problem is actually in the underlying card.io SDK for either [iOS](https://github.com/card-io/card.io-iOS-SDK) or [Android](https://github.com/card-io/card.io-Android-SDK). We're always interested in discovering and fixing bugs in our SDKs!)
+The card.io Cordova plugin provides different configurations that could be set according to your requirements. Here are the list of supported configurations.
 
-**Update:** A very helpful developer from [Keepe](http://www.keepe.com) has added Android support to this plug-in, and has registered the result [here in the Corodova Plugin Registry](http://plugins.cordova.io/#/package/com.keepe.cardio).
+|  **Configuration**               | **Type** | **Description** |
+|  :------                         | :------  | :------         |
+|  requireExpiry                   | Boolean  | Expiry information will not be required. |
+|  requireCVV                      | Boolean  | The user will be prompted for the card CVV |
+|  requirePostalCode               | Boolean  | The user will be prompted for the card billing postal code. |
+|  supressManual                   | Boolean  | Removes the keyboard button from the scan screen. |
+|  restrictPostalCodeToNumericOnly | Boolean  | The postal code will only collect numeric input. Set this if you know the expected country's postal code has only numeric postal codes. |
+|  keepApplicationTheme            | Boolean  | The theme for the card.io Activity's will be set to the theme of the application. |
+|  requireCardholderName           | Boolean  | The user will be prompted for the cardholder name |
+|  scanInstructions                | String   | Used to display instructions to the user while they are scanning their card. |
+|  noCamera                        | Boolean  | If set, the card will not be scanned with the camera. |
+|  scanExpiry                      | Boolean  | If scanExpiry is true, an attempt to extract the expiry from the card image will be made. |
+|  languageOrLocale                | String   | The preferred language for all strings appearing in the user interface. If not set, or if set to null, defaults to the device's current language setting. |
+|  guideColor                      | String   | Changes the color of the guide overlay on the camera. The color is provided in hexadecimal format (e.g. "#FFFFFF") |
+|  suppressConfirmation            | Boolean  | The user will not be prompted to confirm their card number after processing. |
+|  hideCardIOLogo                  | Boolean  | The card.io logo will not be shown overlaid on the camera. |
+|  useCardIOLogo                   | Boolean  | The card.io logo will be shown instead of the PayPal logo. |
+|  suppressScan                    | Boolean  | Once a card image has been captured but before it has been processed, this value will determine whether to continue processing as usual. |
 
 Integration instructions
 ------------------------
 
-The PayPal SDK Cordova/Phonegap Plugin adds support for the CardIO iOS platform. It uses the native CardIO library. Cordova plugin management will set up all the required capabilities/frameworks for the project. The only bit left for you to do is to add necessary files, as described below.
+The card.io Cordova Plugin adds support for the CardIO iOS and android platform. It uses the native CardIO library. Cordova plugin management will set up all the required capabilities/frameworks for the project. The only bit left for you to do is to add necessary files, as described below.
 
-1.	Follow the official [Cordova](https://cordova.apache.org) documentation to install command line tools or [Phonegap](http://phonegap.com/install/).
+1.	Follow the official [Cordova](https://cordova.apache.org) documentation to install command line tools.
 2.	Create project, add plugin and platforms:
 
 ```bash
@@ -29,11 +47,12 @@ The PayPal SDK Cordova/Phonegap Plugin adds support for the CardIO iOS platform.
    $ cordova create ScanCard com.mycompany.scancard "ScanCard"
    $ cd ScanCard
    $ cordova platform add ios
-   $ cordova plugin add https://github.com/card-io/card.io-iOS-SDK-PhoneGap
+   $ cordova platform add android
+   $ cordova plugin add https://github.com/card-io/card.io-Cordova-Plugin
 ```
 
 1.	Follow Your app integration section below.
-2.	Run `cordova run ios` to build and the project.
+2.	Run `cordova run ios` or `cordova run android` to build and the project.
 
 Sample HTML + JS
 ----------------
@@ -101,13 +120,13 @@ Sample HTML + JS
 
         example : function () {
           var cardIOResponseFields = [
-            "card_type",
-            "redacted_card_number",
-            "card_number",
-            "expiry_month",
-            "expiry_year",
+            "cardType",
+            "redactedCardNumber",
+            "cardNumber",
+            "expiryMonth",
+            "expiryYear",
             "cvv",
-            "zip"
+            "postalCode"
           ];
 
           var onCardIOComplete = function(response) {
@@ -130,11 +149,10 @@ Sample HTML + JS
             }
             scanBtn.onclick = function (e) {
               CardIO.scan({
-                  "collect_expiry": true,
-                  "collect_cvv": false,
-                  "collect_zip": false,
-                  "shows_first_use_alert": true,
-                  "disable_manual_entry_buttons": false
+                  "requireExpiry": true,
+                  "requireCVV": false,
+                  "requirePostalCode": false,
+                  "restrictPostalCodeToNumericOnly": true
                 },
                 onCardIOComplete,
                 onCardIOCancel
@@ -150,7 +168,12 @@ Sample HTML + JS
 
 ```
 
+Contributing
+------------
+
+Please read our [contributing guidelines](CONTRIBUTING.md) prior to submitting a Pull Request.
+
 License
 -------
 
--	This plugin is released under the MIT license: http://www.opensource.org/licenses/MIT
+Please refer to this repo's [license file](LICENSE).

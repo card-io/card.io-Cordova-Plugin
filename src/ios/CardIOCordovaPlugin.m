@@ -31,25 +31,64 @@
     self.scanCallbackId = command.callbackId;
     NSDictionary* options = [command.arguments objectAtIndex:0];
 
-    CardIOPaymentViewController *paymentViewController = [[CardIOPaymentViewController alloc] initWithPaymentDelegate:self];
+    NSNumber *noCamera = [options objectForKey:@"noCamera"];
+    BOOL isScanningEnabled = (noCamera != nil) ? [noCamera boolValue] : true;
 
-    NSNumber *collectCVV = [options objectForKey:@"cvv"];
-    if(collectCVV) {
+    CardIOPaymentViewController *paymentViewController = [[CardIOPaymentViewController alloc] initWithPaymentDelegate:self scanningEnabled:isScanningEnabled];
+
+    NSNumber *collectCVV = [options objectForKey:@"requireCVV"];
+    if (collectCVV) {
         paymentViewController.collectCVV = [collectCVV boolValue];
     }
 
-    NSNumber *collectZip = [options objectForKey:@"zip"];
-    if(collectZip) {
+    NSNumber *collectZip = [options objectForKey:@"requirePostalCode"];
+    if (collectZip) {
         paymentViewController.collectPostalCode = [collectZip boolValue];
     }
 
-    NSNumber *collectExpiry = [options objectForKey:@"expiry"];
-    if(collectExpiry) {
+    NSNumber *collectExpiry = [options objectForKey:@"requireExpiry"];
+    if (collectExpiry) {
         paymentViewController.collectExpiry = [collectExpiry boolValue];
     }
 
+    NSNumber *restrictPostalCodeToNumericOnly = [options objectForKey:@"restrictPostalCodeToNumericOnly"];
+    if (restrictPostalCodeToNumericOnly) {
+        paymentViewController.restrictPostalCodeToNumericOnly = [restrictPostalCodeToNumericOnly boolValue];
+    }
+
+    NSNumber *collectCardholderName = [options objectForKey:@"requireCardholderName"];
+    if (collectCardholderName) {
+        paymentViewController.collectCardholderName = [collectCardholderName boolValue];
+    }
+
+    NSNumber *useCardIOLogo = [options objectForKey:@"useCardIOLogo"];
+    if (useCardIOLogo) {
+        paymentViewController.useCardIOLogo = [useCardIOLogo boolValue];
+    }
+
+    NSNumber *scanExpiry = [options objectForKey:@"scanExpiry"];
+    if (scanExpiry) {
+        paymentViewController.scanExpiry = [scanExpiry boolValue];
+    }
+
+    NSString *guideColorString = [options objectForKey:@"guideColor"];
+    if (guideColorString) {
+        UIColor *guideColor = [CardIOCordovaPlugin colorFromHex:guideColorString];
+        paymentViewController.guideColor = guideColor;
+    }
+
+    NSNumber *hideCardIOLogo = [options objectForKey:@"hideCardIOLogo"];
+    if (hideCardIOLogo) {
+        paymentViewController.hideCardIOLogo = [hideCardIOLogo boolValue];
+    }
+
+    NSNumber *suppressScanConfirmation = [options objectForKey:@"suppressScan"];
+    if (suppressScanConfirmation) {
+        paymentViewController.suppressScanConfirmation = [suppressScanConfirmation boolValue];
+    }
+
     NSNumber *disableManualEntryButtons = [options objectForKey:@"supressManual"];
-    if(disableManualEntryButtons) {
+    if (disableManualEntryButtons) {
         paymentViewController.disableManualEntryButtons = [disableManualEntryButtons boolValue];
     }
 
@@ -57,6 +96,12 @@
     NSString *languageOrLocale = [[[NSLocale alloc] initWithLocaleIdentifier:[options objectForKey:@"languageOrLocale"]] localeIdentifier];
     if (languageOrLocale) {
         paymentViewController.languageOrLocale = languageOrLocale;
+    }
+
+    // if it is nil, its ok.
+    NSString *scanInstructions = [[[NSLocale alloc] initWithLocaleIdentifier:[options objectForKey:@"scanInstructions"]] localeIdentifier];
+    if (scanInstructions) {
+        paymentViewController.scanInstructions = scanInstructions;
     }
 
     [self.viewController presentViewController:paymentViewController animated:YES completion:nil];
@@ -86,21 +131,21 @@
     [pvc dismissViewControllerAnimated:YES completion:^{
       // Convert CardIOCreditCardInfo into dictionary for passing back to javascript
       NSMutableDictionary *response = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       info.cardNumber, @"card_number",
-                                       info.redactedCardNumber, @"redacted_card_number",
+                                       info.cardNumber, @"cardNumber",
+                                       info.redactedCardNumber, @"redactedCardNumber",
                                        [CardIOCreditCardInfo displayStringForCardType:info.cardType
                                                                 usingLanguageOrLocale:pvc.languageOrLocale],
-                                       @"card_type",
+                                       @"cardType",
                                        nil];
       if(info.expiryMonth > 0 && info.expiryYear > 0) {
-        [response setObject:[NSNumber numberWithUnsignedInteger:info.expiryMonth] forKey:@"expiry_month"];
-        [response setObject:[NSNumber numberWithUnsignedInteger:info.expiryYear] forKey:@"expiry_year"];
+        [response setObject:[NSNumber numberWithUnsignedInteger:info.expiryMonth] forKey:@"expiryMonth"];
+        [response setObject:[NSNumber numberWithUnsignedInteger:info.expiryYear] forKey:@"expiryYear"];
       }
       if(info.cvv.length > 0) {
         [response setObject:info.cvv forKey:@"cvv"];
       }
       if(info.postalCode.length > 0) {
-        [response setObject:info.postalCode forKey:@"zip"];
+        [response setObject:info.postalCode forKey:@"postalCode"];
       }
 
       [self sendSuccessTo:self.scanCallbackId withObject:response];
@@ -138,6 +183,43 @@
 - (void)sendFailureTo:(NSString *)callbackId {
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
+#pragma mark - Private helper method
+
++ (UIColor *)colorFromHex:(NSString *)hexColor {
+    // Extract an ASCII c string from matchedString.  The '#' character should not be
+    // included.
+    const char *hexColorCString = [[hexColor substringFromIndex:1] cStringUsingEncoding:NSASCIIStringEncoding];
+
+    // Convert hexColorCString into an integer.
+    unsigned long hexColorCode = strtoul(hexColorCString, NULL, 16);
+
+    CGFloat red, green, blue;
+
+    if (matchedString.length-1 > 3)
+        // If the color code is in six digit notation...
+    {
+        // Extract each color component from the integer representation of the
+        // color code.  Each component has a value of [0-255] which must be
+        // converted into a normalized float for consumption by UIColor.
+        red = ((hexColorCode & 0x00FF0000) >> 16) / 255.0f;
+        green = ((hexColorCode & 0x0000FF00) >> 8) / 255.0f;
+        blue = (hexColorCode & 0x000000FF) / 255.0f;
+    }
+    else
+        // The color code is in shorthand notation...
+    {
+        // Extract each color component from the integer representation of the
+        // color code.  Each component has a value of [0-255] which must be
+        // converted into a normalized float for consumption by UIColor.
+        red = (((hexColorCode & 0x00000F00) >> 8) | ((hexColorCode & 0x00000F00) >> 4)) / 255.0f;
+        green = (((hexColorCode & 0x000000F0) >> 4) | (hexColorCode & 0x000000F0)) / 255.0f;
+        blue = ((hexColorCode & 0x0000000F) | ((hexColorCode & 0x0000000F) << 4)) / 255.0f;
+    }
+
+    // Create and return a UIColor object with the extracted components.
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
 }
 
 @end
