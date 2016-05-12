@@ -197,7 +197,7 @@
 
     CGFloat red, green, blue;
 
-    if (matchedString.length-1 > 3)
+    if ([hexColor length] - 1 > 3)
         // If the color code is in six digit notation...
     {
         // Extract each color component from the integer representation of the
