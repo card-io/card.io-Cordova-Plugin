@@ -1,5 +1,9 @@
 card.io Cordova Plugin Release Notes
 ===================================
+2.0.1
+------
+* Fixes Plugin.xml
+
 2.0.0
 ------
 * Added more configurations to cordova app
