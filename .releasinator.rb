@@ -26,7 +26,7 @@ configatron.custom_validation_methods = [
   method(:validate_version_match)
 ]
 
-# there are no separate build steps for PayPal-Cordova-Plugin, so it is just empty method
+# there are no separate build steps for card.io-Cordova-Plugin, so it is just empty method
 def build_method
 end
 
@@ -42,7 +42,7 @@ configatron.publish_to_package_manager_method = method(:publish_to_package_manag
 
 
 def wait_for_package_manager(version)
-  CommandProcessor.wait_for("wget -U \"non-empty-user-agent\" -qO- https://www.npmjs.com/package/com.paypal.cordova.mobilesdk | grep #{@current_release.version} | cat")
+  CommandProcessor.wait_for("wget -U \"non-empty-user-agent\" -qO- https://www.npmjs.com/package/card.io.cordova.mobilesdk | grep #{@current_release.version} | cat")
 end
 
 # The method that waits for the package manager to be done.  Required
