@@ -147,6 +147,9 @@
       if(info.postalCode.length > 0) {
         [response setObject:info.postalCode forKey:@"postalCode"];
       }
+      if(info.cardholderName.length > 0) {
+        [response setObject:info.cardholderName forKey:@"cardholderName"];
+      }
 
       [self sendSuccessTo:self.scanCallbackId withObject:response];
     }];
