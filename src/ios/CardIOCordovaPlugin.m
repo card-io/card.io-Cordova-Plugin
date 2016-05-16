@@ -32,7 +32,7 @@
     NSDictionary* options = [command.arguments objectAtIndex:0];
 
     NSNumber *noCamera = [options objectForKey:@"noCamera"];
-    BOOL isScanningEnabled = (noCamera != nil) ? [noCamera boolValue] : true;
+    BOOL isScanningEnabled = (noCamera != nil) ? ![noCamera boolValue] : true;
 
     CardIOPaymentViewController *paymentViewController = [[CardIOPaymentViewController alloc] initWithPaymentDelegate:self scanningEnabled:isScanningEnabled];
 
