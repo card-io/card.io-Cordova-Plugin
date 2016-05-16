@@ -117,6 +117,7 @@ public class CardIOCordovaPlugin extends CordovaPlugin {
             scanCard.put("expiryYear", card.expiryYear);
             scanCard.put("cvv", card.cvv);
             scanCard.put("postalCode", card.postalCode);
+            scanCard.put("cardholderName", card.cardholderName);
         } catch (JSONException e) {
             scanCard = null;
         }
