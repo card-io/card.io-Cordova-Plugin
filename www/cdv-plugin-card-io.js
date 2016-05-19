@@ -43,6 +43,7 @@ CardIO.prototype.scan = function(options, onSuccess, onFailure) {
 CardIO.prototype.canScan = function(callback) {
   var failureCallback = function() {
     console.log("Could not detect whether card.io card scanning is available.");
+    callback(false);
   };
   var wrappedSuccess = function(response) {
     callback(response !== 0);
