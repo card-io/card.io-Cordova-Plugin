@@ -1,6 +1,7 @@
 card.io Cordova Plugin Release Notes
-===================================
-TODO
+====================================
+
+2.0.2
 -----
 * Android: Add ability to blur all digits in the scanned card image, minus any number of digits to remain unblurred, enabled via `CardIOActivity.EXTRA_UNBLUR_DIGITS`.   (Thank you Michael Schmoock!)
 * Android: Fix issue where Maestro cards were not correctly recognized [#154](https://github.com/card-io/card.io-Android-SDK/issues/154).
