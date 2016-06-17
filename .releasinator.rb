@@ -59,7 +59,7 @@ configatron.release_to_github = true
 
 
 def plugin_version()
-  f=File.open("plugin.xml", 'r') do |f|
+  File.open("plugin.xml", 'r') do |f|
     f.each_line do |line|
       if line.match (/version=\"\d+\.\d+\.\d+\"/)
         return line.strip.split('=')[1].strip.split('"')[1]
@@ -69,7 +69,7 @@ def plugin_version()
 end
 
 def package_version()
-  f=File.open("package.json", 'r') do |f|
+  File.open("package.json", 'r') do |f|
     f.each_line do |line|
       if line.match (/\"version\": \"\d+\.\d+\.\d+\"/)
         return line.strip.split(':')[1].strip.split('"')[1]
