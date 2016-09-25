@@ -3,7 +3,7 @@ card.io Cordova Plugin Release Notes
 
 2.1.0
 -----
-* iOS: Update to 5.4.1 for iOS card.io
+* iOS: Update to 5.4.1 for iOS card.io.
 * iOS: Fix suppressScan config does not work on iOS [#46](https://github.com/card-io/card.io-Cordova-Plugin/issues/46).
 
 2.0.2
