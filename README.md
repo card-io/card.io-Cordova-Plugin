@@ -54,6 +54,16 @@ The card.io Cordova Plugin adds support for the CardIO iOS and android platform.
 1.	Follow Your app integration section below.
 2.	Run `cordova run ios` or `cordova run android` to build and the project.
 
+Note: For use with iOS 10 +
+When building your app with the iOS 10 SDK +, you have to add some info to the info.plist file. This is due to increased security in iOS 10. Go to your app directory and search for the &lt;your app name&gt;Info.plist file. Add the following lines in the main &lt;dict&gt; element.
+
+```xml
+      <key>NSCameraUsageDescription</key>
+      <string>To scan credit cards.</string>
+```
+
+If you have a different way to edit .plist files - plugins etc. - you can do that.
+
 Sample HTML + JS
 ----------------
 
@@ -166,6 +176,59 @@ Sample HTML + JS
 
     app.initialize();
 
+```
+
+Another javascript implementation example.
+
+```javascript
+      document.addEventListener('deviceready', scanCreditCard, false);
+
+      function scanCreditCard(){
+        CardIO.canScan(onCardIOCheck);
+
+        function onCardIOComplete(response) {
+          var cardIOResponseFields = [
+            "cardType",
+            "redactedCardNumber",
+            "cardNumber",
+            "expiryMonth",
+            "expiryYear",
+            "cvv",
+            "postalCode"
+          ];
+
+          var len = cardIOResponseFields.length;
+          alert("card.io scan complete");
+          for (var i = 0; i < len; i++) {
+            var field = cardIOResponseFields[i];
+            alert(field + ": " + response[field]);
+          }
+        }
+
+        function onCardIOCancel() {
+          alert("card.io scan cancelled");
+        }
+
+        function onCardIOCheck(canScan) {
+          alert("card.io canScan? " + canScan);
+          var scanBtn = document.getElementById("scanBtn");
+          if (!canScan) {
+            scanBtn.innerHTML = "Manual entry";
+          }
+
+          scanBtn.addEventListener("click", function(e) {      
+            CardIO.scan({
+              "requireExpiry": true,
+              "scanExpiry": true,
+              "requirePostalCode": true,
+              "restrictPostalCodeToNumericOnly": true,
+              "hideCardIOLogo": true,
+              "suppressScan": false,
+              "keepApplicationTheme": true
+            } , onCardIOComplete, onCardIOCancel);
+          });
+        }
+      }
 ```
 
 Contributing
