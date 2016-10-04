@@ -55,7 +55,7 @@ The card.io Cordova Plugin adds support for the CardIO iOS and android platform.
 2.	Run `cordova run ios` or `cordova run android` to build and the project.
 
 Note: For use with iOS 10 +
-When building your app with the iOS 10 SDK +, you have to add some info to the info.plist file. This is due to increased security in iOS 10. Go to your app directory and search for the <your app name>Info.plist file. Add the following lines in the main <dict> element.
+When building your app with the iOS 10 SDK +, you have to add some info to the info.plist file. This is due to increased security in iOS 10. Go to your app directory and search for the <your app name>Info.plist file. Add the following lines in the main $lt;dict$gt; element.
 
 ```xml
       <key>NSCameraUsageDescription</key>
