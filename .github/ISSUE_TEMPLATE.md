@@ -1,9 +1,9 @@
-### Required Information
+### General information
 
-- Cordova Plugin Version:
-- Platforms (iOS/Android/Both):
-- Device OS Version and Device (iOS 9.x on an iPhone 6, Android Marshmallow on Nexus 6, etc.):
+* SDK/Library version: <!-- Example: 4.7.2 -->
+* Platforms: <!-- Example: iOS/Android/Both -->
+* Device OS Version and Device: <!-- Example: iOS 9.x on an iPhone 6, Android Marshmallow on Nexus 6 -->
 
-### Issue Description
+### Issue description
 
-> Please include as many details (logs, steps to reproduce, screenshots, frameworks/dependencies) as you can to help us reproduce this issue faster.
+<!-- To help us quickly reproduce your issue, include as many details as possible, such as logs, steps to reproduce, and so on.  If the issue reports a new feature, follow the [user story](https://en.wikipedia.org/wiki/User_story) format to clearly describe the use case. -->
